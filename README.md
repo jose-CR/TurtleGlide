@@ -23,6 +23,11 @@ INSTALLED_APPS = [
 ]
 ```
 
+ahora llamamos al archivo setup.sh que estalara todas las dependencias necesarias
+```bash
+./setup.sh
+```
+
 uso de TurtleGlide
 ------------
 
