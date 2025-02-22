@@ -1,0 +1,5 @@
+build
+dist
+venv
+TurtleGlide.egg-info
+__pycache__
