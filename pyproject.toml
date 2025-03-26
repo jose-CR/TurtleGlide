@@ -1,6 +1,6 @@
 [project]
 name = "TurtleGlide"
-version = "0.0.1"
+version = "0.0.2"
 description = "Comandos para crear archivos HTML, CSS y JS"
 readme = "README.md"
 license = { text = "MPL-2.0" }
@@ -16,14 +16,17 @@ classifiers = [
 ]
 
 dependencies = [
-    "requests",
-    "django>=3.2,<4",
-    "setuptools"
+    "django>=3.2",
+]
+
+# Incluir archivos estáticos y templates
+[tool.setuptools.package-data]
+"*" = [
+    "TurtleGlide/static/js/*.js",
+    "TurtleGlide/static/css/*.css",
+    "TurtleGlide/templates/*.html",
 ]
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "build", "requests"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-packages = { find = {} }
