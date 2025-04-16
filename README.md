@@ -44,6 +44,10 @@ Hay tres parámetros obligatorios para el uso del comando `create_archive`:
 python manage.py create_archive "app_name" "file_path" --type="template"
 ```
 
+>[!NOTE]
+>La carpeta llamada "chocolate" contiene un proyecto de Django utilizado para realizar pruebas y analizar nuevas implementaciones.
+
+
 **Instalación para desarrolladores**
 ---------------------------------
 
