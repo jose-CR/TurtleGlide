@@ -1,0 +1,12 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% block static %}
+<link rel="stylesheet" href="{% static 'css/logged.css' %}">
+{% endblock %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="head-title">
+    <h2>You're logged, {{ request.user.username }}</h2>
+</div>
+{% endif %}
+{% endblock %}

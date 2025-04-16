@@ -1,0 +1,15 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% load forms_tags %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if not request.user.is_authenticated %}
+<section class="form-panel">
+    {% render_form form titulo contents content_botton %}
+</section>
+{% endif %}
+{% endblock %}
