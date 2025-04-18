@@ -7,7 +7,7 @@
 
 {% block content %}
 <section class="form-panel">
-    <h2 class="text-main">Login</h2>
+    <h2 class="text-main">{{ title }}</h2>
 
     {% if form.non_field_errors %}
     <div class="form-errors">
@@ -16,6 +16,7 @@
       {% endfor %}
     </div>
     {% endif %}
+
     <form method="post" class="form-control">
         {% csrf_token %}
 
@@ -24,23 +25,43 @@
             {{ form.username }}
             {% if form.username.errors %}
             <div class="field-error">
-              {{ form.username.errors.0 }}
+                {{ form.username.errors.0 }}
             </div>
             {% endif %}
         </div>
 
         <div class="form-group">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-            {% if form.password.errors %}
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
             <div class="field-error">
-                {{ form.password.errors.0 }}
+                {{ form.first_name.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <div class="field-error">
+                {{ form.last_name.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="field-error">
+                {{ form.email.errors.0 }}
             </div>
             {% endif %}
         </div>
 
         <div class="full-width">
-            <button type="submit">Login</button>
+            <button type="submit">{{ button }}</button>
         </div>
     </form>
 </section>

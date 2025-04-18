@@ -1,16 +1,12 @@
 from django.urls import path
-from . import views
-from .auth.password import PasswordViews
+from .views import app, Profile, ProfileCreateView, ProfileUpdateView, ProfileDeleteView
 
 urlpatterns = [
-    path('', views.app, name='app'),
-    path('logout/', views.exit, name='exit'),
-    path('register/', views.register, name='register'),
-
-    # vistas profiles
-    path('profile/', views.profile, name='profile'),
-    path('profile/change-password/', PasswordViews.Change.as_view(), name="change-password"),
-    path('profile/reset-password/', PasswordViews.Reset.as_view(), name="reset-password"),
-    path('profile/<uidb64>/<token>/', PasswordViews.Confirm.as_view(), name="reset-password-confirm"),
-    path('profile/reset/complete', PasswordViews.Complete.as_view(), name="reset-password-done"),
+    path('', app, name="app"),
+    path('logout', Profile.exit, name="exit"),
+    # CRUD Profile
+    path('register/', ProfileCreateView.as_view(), name='register'),
+    path('profile/', Profile.index ,name="profile"),
+    path('profile/edit/<int:pk>', ProfileUpdateView.as_view() , name="profile_edit"),
+    path('profile/delete/<int:pk>', ProfileDeleteView.as_view() , name="profile_delete")
 ]

@@ -1,35 +1,56 @@
 {% extends 'layouts/app.html' %}
 {% load static %}
-{% load forms_tags %}
-{% load ui_tags %}
 
 {% block static %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}">
-<link rel="stylesheet" href="{% static 'css/ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
 
 {% block content %}
-{% if request.user.is_authenticated %} 
-  {% if messages %}
-    <div class="message-container">
-      {% for message in messages %}
-        <div class="message {{ message.tags }}">
-          <span class="close-btn" onclick="closeMessage(this)">&times;</span>
-          {{ message }}
-        </div>
-      {% endfor %}
+{% if messages %}
+<div class="message-container">
+  {% for message in messages %}
+    <div class="message {{ message.tags }}">
+      <span class="close-btn" onclick="closeMessage(this)">&times;</span>
+      {{ message }}
     </div>
-  {% endif %}
-
-  <section class="form-panel">
-    {% render_form form titulo contents content_button %}
-
-    <h2 class="second-title">Cambio de contraseña:</h2>
-    <p class="section-paraf">Si deseas cambiar la contraseña de tu cuenta, presiona el botón a continuación para acceder al formulario.</p>
-    {% button title_button=title_button href=href %}
-  </section>
+  {% endfor %}
+</div>
 {% endif %}
+<section class="form-panel">
+    <h2 class="text-main">Perfil</h2>
+
+    {% if request.user.is_authenticated %}
+        <div class="normal-group">
+            <label for="username">{{ label_username }}:</label>
+            <p>{{ request.user.username }}</p>
+        </div>
+
+        <div class="normal-group">
+            <label for="first_name">{{ label_first_name }}:</label>
+            <p>{{ request.user.first_name }}</p>
+        </div>
+
+        <div class="normal-group">
+            <label for="last_name">{{ label_last_name }}:</label>
+            <p>{{ request.user.last_name }}</p>
+        </div>
+
+        <div class="normal-group">
+            <label for="email">{{ label_email }}:</label>
+            <p>{{ request.user.email }}</p>
+        </div>
+
+        <div class="button-edt">
+            <a href="{% url 'profile_edit' request.user.id %}">Editar</a>
+        </div>
+
+        <h2 class="second-title">Borrar Cuenta:</h2>
+        <p class="section-paraf">Si ya no quieres usar este usuario y quieres eliminarlo puedes pulsar este button:</p>
+        <a href="{% url 'profile_delete' request.user.id %}">Eliminar cuenta</a>
+    {% endif %}
+</section>
 {% endblock %}
+
 {% block script %}
 <script>
   function closeMessage(button) {

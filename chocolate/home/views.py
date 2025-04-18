@@ -1,69 +1,102 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.http import Http404
+from django.contrib.auth import login, logout, authenticate
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
 def app(request):
     return render(request, 'index.html')
 
-def exit(request):
-    logout(request)
-    return redirect('app')
-
-def register(request):
-    if request.method == 'POST':
-        user_creation_form = CustomUserCreationForm(data=request.POST)
-
-        if user_creation_form.is_valid():
-            user_creation_form.save()
-            user = authenticate(
-                username=user_creation_form.cleaned_data['username'],
-                password=user_creation_form.cleaned_data['password1']
-            )
-            login(request, user)
-            return redirect('app')
-    else:
-        user_creation_form = CustomUserCreationForm()
-
-    context = {
-        'form': user_creation_form,
-        'titulo': "Register",
-        'contents': {
-            'username': user_creation_form['username'],
-            'first_name': user_creation_form['first_name'],
-            'last_name': user_creation_form['last_name'],
-            'email': user_creation_form['email'],
-            'password1': user_creation_form['password1'],
-            'password2': user_creation_form['password2'],
-        },
-        'content_botton': "Sign in"
-    }
-
-    return render(request, 'registration/register.html', context)
-
-@login_required
-def profile(request):
-    user_form = CustomUserChangeForm(instance=request.user)
-    if request.method == 'POST':
-        user_form = CustomUserChangeForm(request.POST, instance=request.user)
-        if user_form.is_valid():
-            user_form.save()
-            return redirect(profile)
+class Profile():
+    def exit(request):
+        logout(request)
+        return redirect('app')
     
-    context = {
-        'form': user_form,
-        'titulo': "Perfil",
-        'contents': {
-            'username': user_form['username'],
-            'first_name': user_form['first_name'],
-            'last_name': user_form['last_name'],
-            'email': user_form['email'],
-        },
-        'content_button': "editing",
-        'title_button': "Change password",
-        'href': "change-password",
-    }
-    return render(request, 'profile.html', context)
+    @login_required
+    def index(request):
+
+        context = {
+            'label_username': 'Usuario',
+            'label_first_name': 'Primer Nombre',
+            'label_last_name': 'Último Apellido',
+            'label_email': 'Correo Electrónico',
+        }
+
+        return render(request, 'profile.html', context)
+    
+class ProfileCreateView(CreateView):
+    model = User
+    form_class = CustomUserCreationForm
+    template_name = 'registration/register.html'
+    success_url = reverse_lazy('app')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        success_url = reverse_lazy('app')
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password1')
+        user = authenticate(self.request, username=username, password=password)
+        if user:
+            login(self.request, user)
+            
+        return redirect(success_url)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['title'] = 'Register'
+        context['button'] = 'Sing In'
+        return context
+
+class ProfileUpdateView(UpdateView):
+    model = User
+    form_class = CustomUserChangeForm
+    template_name = 'profile/profile-edit.html'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self, queryset=None):
+        response = super().get_object(queryset)
+        user_id = self.kwargs.get('pk')
+        if self.request.user.id == user_id:
+            return self.request.user
+        raise Http404("No puedes editar otro usuario.")
+
+    def get_queryset(self):
+        return User.objects.filter(pk=self.request.user.pk)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Tu perfil se ha actualizado correctamente.')
+        return response
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['title'] = 'Edit User'
+        context['button'] = 'editing'
+        context['user_id'] = self.request.user.id
+        return context
+    
+class ProfileDeleteView(DeleteView):
+    model = User
+    template_name = 'profile/profile-delete.html'
+    success_url = reverse_lazy('app')
+
+    def get_queryset(self):
+        return User.objects.filter(pk=self.request.user.pk)
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        logout(request)
+
+        return response
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['title'] = 'Delete User'
+        context['button'] = 'deleting'
+        return context
 

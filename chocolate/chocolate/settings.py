@@ -20,12 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w!aawkbc1%+j9whh17jsqr!yg=sq3jp^dbv3b#yq)xvle0+xv*'
+SECRET_KEY = 'django-insecure-tvmai1=d=pkp)&2qm*_=46$5_b0#ss%s&u+9q#b*8%sga6a4)@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -122,16 +125,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Variables Globales
-
 LOGIN_REDIRECT_URL = "app"
 LOGOUT_REDIRECT_URL = "app"
-
-
-#envio de emails
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '1a9f50bc13475c'
-EMAIL_HOST_PASSWORD = '4761cee8679b16'
-EMAIL_PORT = 2525
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'turtle@misitio.com'

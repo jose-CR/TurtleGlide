@@ -328,3 +328,47 @@ body {
   }
 }
 
+
+/* Estilo para los datos del perfil (lectura) */
+.normal-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.normal-group label {
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.normal-group p {
+  background-color: #f1f1f1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-light);
+  border: 1px solid var(--input-border);
+}
+
+/* Botón de editar */
+.button-edt {
+  text-align: right;
+  margin-top: 30px;
+}
+
+.button-edt a {
+  background-color: var(--accent);
+  color: white;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.button-edt a:hover {
+  background-color: #a88f5c;
+}
