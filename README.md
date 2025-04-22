@@ -70,3 +70,11 @@ source venv/bin/activate
 ### Listo para empezar
 
 Ya estás listo para empezar a trabajar con TurtleGlide sin problemas.
+
+### cosas por hacer
+1. CRUD y contraseña
+   - [ ] hacer los test para el CRUD y la contraseña
+2. estilos
+   - [ ] terminar los estilos
+3. svg
+	- [ ] encontrar un svg para el navbar y la portada

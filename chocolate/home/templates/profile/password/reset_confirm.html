@@ -1,0 +1,47 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block static %}
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="form-panel">
+    <h2 class="text-main">Establecer nueva contraseña</h2>
+
+    {% if validlink %}
+    <p>Ingresa tu nueva contraseña a continuación:</p>
+
+    <form method="post" class="form-control">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.new_password1.label_tag }}
+            {{ form.new_password1 }}
+            {% if form.new_password1.errors %}
+            <div class="field-error">
+                {{ form.new_password1.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.new_password2.label_tag }}
+            {{ form.new_password2 }}
+            {% if form.new_password2.errors %}
+            <div class="field-error">
+                {{ form.new_password2.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="full-width">
+            <button type="submit">Cambiar contraseña</button>
+        </div>
+    </form>
+
+    {% else %}
+    <p class="text-error">El enlace de restablecimiento no es válido. Es posible que ya haya sido usado o que haya expirado.</p>
+    {% endif %}
+</section>
+{% endblock %}
