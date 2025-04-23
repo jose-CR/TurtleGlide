@@ -74,7 +74,10 @@ Ya estás listo para empezar a trabajar con TurtleGlide sin problemas.
 ### cosas por hacer
 1. CRUD y contraseña
    - [ ] hacer los test para el CRUD y la contraseña
+   - [ ] hacer mas complejo y mas robusto el test de test_password_confirm
 2. estilos
    - [ ] terminar los estilos
 3. svg
 	- [ ] encontrar un svg para el navbar y la portada
+4. traducción
+   - [ ] mejorar las salidas de texto para diferentes idiomas 

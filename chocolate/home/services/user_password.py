@@ -1,6 +1,6 @@
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
 
 #variables template
 template_password = 'profile/password/'
@@ -23,8 +23,8 @@ class UserPasswordReset(PasswordResetView):
             return super().form_valid(form)
 
 class UserPasswordConfirm(PasswordResetConfirmView):
-        template_name = f"{template_password}reset_confirm.html"
-        success_url = reverse_lazy('reset-password-done')
+    template_name = f"{template_password}reset_confirm.html"
+    success_url = reverse_lazy('reset-password-done')
 
 class UserPasswordComplete(PasswordResetCompleteView):
     template_name = f"{template_password}reset_password_complete.html"
