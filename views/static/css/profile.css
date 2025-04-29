@@ -1,0 +1,374 @@
+:root {
+    --bg-main: #f7f9fc;
+    --form-bg: #ffffff;
+    --primary: #2E1F33;        /* Dark purple */
+    --accent: #C1A875;         /* Gold */
+    --text-dark: #2C2C2C;
+    --text-light: #666;
+    --input-border: #ddd;
+    --shadow: rgba(0, 0, 0, 0.08);
+}
+  
+/* Panel general */
+body {
+  background-color: var(--bg-main);
+  font-family: 'Segoe UI', sans-serif;
+}
+  
+.form-panel {
+  background: var(--form-bg);
+  width: 700px;
+  padding: 30px;
+  margin: 60px auto;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px var(--shadow);
+}
+  
+/* Título */
+.text-main {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: var(--primary);
+  font-weight: 600;
+}
+  
+/* Formulario en grid */
+.form-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 30px 40px;
+}
+
+.center-if-alone {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 50%; /* o lo que se vea bien */
+}
+  
+/* Campo individual */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+  
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+  
+.form-group input {
+  padding: 10px 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+  
+.form-group input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(193, 168, 117, 0.2);
+}
+  
+/* Botón */
+.full-width {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 20px;
+}
+  
+button[type="submit"] {
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+  
+button[type="submit"]:hover {
+  background-color: #1a1022;
+}
+
+.form-errors {
+    background-color: #ffe0e0;
+    color: #a80000;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    box-shadow: 0 0 6px rgba(168, 0, 0, 0.1);
+}
+  
+.field-error {
+  color: #a80000;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+  
+:root {
+    --bg-main: #f7f9fc;
+    --form-bg: #ffffff;
+    --primary: #2E1F33;        /* Dark purple */
+    --accent: #C1A875;         /* Gold */
+    --text-dark: #2C2C2C;
+    --text-light: #666;
+    --input-border: #ddd;
+    --shadow: rgba(0, 0, 0, 0.08);
+}
+  
+/* Panel general */
+body {
+  background-color: var(--bg-main);
+  font-family: 'Segoe UI', sans-serif;
+}
+  
+.form-panel {
+  background: var(--form-bg);
+  width: 700px;
+  padding: 30px;
+  margin: 60px auto;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px var(--shadow);
+}
+  
+/* Título */
+.text-main {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: var(--primary);
+  font-weight: 600;
+}
+  
+/* Formulario en grid */
+.form-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 30px 40px;
+}
+
+.center-if-alone {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 50%; /* o lo que se vea bien */
+}
+  
+/* Campo individual */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+  
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+  
+.form-group input {
+  padding: 10px 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+  
+.form-group input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(193, 168, 117, 0.2);
+}
+  
+/* Botón */
+.full-width {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 20px;
+}
+  
+.full-width .button_form{
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+  
+.full-width .button_form:hover {
+  background-color: #1a1022;
+}
+
+.form-errors {
+    background-color: #ffe0e0;
+    color: #a80000;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    box-shadow: 0 0 6px rgba(168, 0, 0, 0.1);
+}
+  
+.field-error {
+  color: #a80000;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.form-panel .second-title{
+  margin-top: 70px;
+}
+
+.form-panel .section-paraf {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: var(--text-light);
+  text-align: left;
+  word-wrap: break-word;   
+  overflow-wrap: break-word;   
+  line-height: 1.6;       
+  max-width: 100%;               
+}
+
+.message-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.message-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.message {
+  position: relative;
+  padding: 14px 24px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease-in-out;
+  padding-right: 40px;
+}
+
+/* Tipos de mensajes */
+.message.success {
+  background-color: #e6ffed;
+  color: #1a7f37;
+  border-left: 6px solid #1a7f37;
+}
+
+.message.error {
+  background-color: #ffe6e6;
+  color: #d60000;
+  border-left: 6px solid #d60000;
+}
+
+.message.warning {
+  background-color: #fffbe6;
+  color: #8c6d00;
+  border-left: 6px solid #8c6d00;
+}
+
+.message.info {
+  background-color: #e6f0ff;
+  color: #0052cc;
+  border-left: 6px solid #0052cc;
+}
+
+/* Botón cerrar */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Animaciónes */
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación de salida */
+.fade-out {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+
+/* Estilo para los datos del perfil (lectura) */
+.normal-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.normal-group label {
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.normal-group p {
+  background-color: #f1f1f1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-light);
+  border: 1px solid var(--input-border);
+}
+
+/* Botón de editar */
+.button-edt {
+  text-align: right;
+  margin-top: 30px;
+}
+
+.button-edt a {
+  background-color: var(--accent);
+  color: white;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.button-edt a:hover {
+  background-color: #a88f5c;
+}

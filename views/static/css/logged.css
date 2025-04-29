@@ -1,0 +1,22 @@
+:root {
+    --bg-main: #f7f9fc;
+    --form-bg: #ffffff;
+    --primary: #2E1F33;        /* Dark purple */
+    --accent: #C1A875;         /* Gold */
+    --text-dark: #2C2C2C;
+    --text-light: #666;
+    --input-border: #ddd;
+    --shadow: rgba(0, 0, 0, 0.08);
+}
+
+.head-title {
+    background-color: var(--bg-main);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.3); /* Borde negro con un poco de opacidad */
+    padding: 10px;
+}
+
+.head-title h2 {
+    color: var(--primary);
+    margin: 0;
+    font-size: 24px;
+}
