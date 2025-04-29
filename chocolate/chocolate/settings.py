@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'TurtleGlide',
-    'home',
 ]
 
 MIDDLEWARE = [
@@ -124,15 +123,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Variables Globales
-LOGIN_REDIRECT_URL = "app"
-LOGOUT_REDIRECT_URL = "app"
-
-#envio de emails
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 2525
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'turtle@misitio.com'
