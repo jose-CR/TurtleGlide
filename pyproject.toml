@@ -1,0 +1,13 @@
+[project]
+name = "turtle_glide"
+version = "0.0.1"
+dependencies = [
+    "requests",
+    "django",
+    "setuptools"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+
+build-backend = "setuptools.build_meta"
