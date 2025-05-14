@@ -1,12 +1,12 @@
 import os
-from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.core.management.base import BaseCommand, CommandError
 from django.apps import apps
 
 class Command(BaseCommand):
     help = 'Crea archivos dentro de la carpeta templates o static de una app'
 
     def add_arguments(self, parser):
-        parser.add_argument('app_name', type==str, help='Nombre de la app')
+        parser.add_argument('app_name', type=str, help='Nombre de la app')
         parser.add_argument('file_path', type=str, help='Ruta del componente')
         parser.add_argument(
             '--type',
