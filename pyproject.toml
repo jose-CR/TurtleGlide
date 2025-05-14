@@ -17,6 +17,7 @@ classifiers = [
 
 dependencies = [
     "requests"
+    "django"
 ]
 
 [build-system]
