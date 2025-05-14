@@ -55,13 +55,13 @@ class Command(BaseCommand):
         app_config = self.get_app_config_or_fail(app_name)
 
         for file_path in template_files:
-            base_dir = os.path.join(app_config.path, 'templates', app_name)
+            base_dir = os.path.join(app_config.path, 'templates')
             file_full_path = os.path.normpath(os.path.join(base_dir, file_path))
             self.create_directories(file_full_path)
             self.create_file(file_full_path, file_path, app_name, 'templates')
 
         for file_path in static_files:
-            base_dir = os.path.join(app_config.path, 'static', app_name)
+            base_dir = os.path.join(app_config.path, 'static')
             file_full_path = os.path.normpath(os.path.join(base_dir, file_path))
             self.create_directories(file_full_path)
             self.create_file(file_full_path, file_path, app_name, 'static')

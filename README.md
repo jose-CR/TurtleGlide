@@ -33,9 +33,8 @@ INSTALLED_APPS = [
 Hay tres parámetros obligatorios para el uso del comando `create_archive`:
 
 * `app_name`: Nombre de la app
-* `file_path`: Ruta del componente
- `--template` para archivos en la carpeta `templates`
-* `--static` para archivos en la carpeta `static`
+* `--template`: para archivos en la carpeta `templates`
+* `--static`: para archivos en la carpeta `static`
 
 ### Comando de ejemplo
 ```bash
@@ -47,7 +46,7 @@ python manage.py create_archive "app_name" --static "file_path"
 Crea multiples archivos en las carpetas `static` y `templates` de una app de Django.
 
 ```bash
-python manage.py create_archive home --static css/app.css --template layouts/main.html
+python manage.py create_archive home --static css/app.css js/app.js --template layouts/main.html
 ```
 
 **uso de turtle_glide para desarrolladores**
@@ -76,11 +75,11 @@ source venv/bin/activate
 #### variables
 
 - app_name: Nombre de la app
-- file_path: Ruta del componente
-- --type: de forma determinada el tipo de archivo a crear: "template" para archivos en la carpeta templates, "static" para archivos en la carpeta static
+- `--template`: para archivos en la carpeta `templates`
+- `--static`: para archivos en la carpeta `static`
 
 ```bash
-python manage.py create_archive "app_name" "file_path" --type="template"
+python manage.py create_archive "app_name" --static "file_path"
 ```
 
 ### Listo para empezar
