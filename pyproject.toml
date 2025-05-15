@@ -1,6 +1,6 @@
 [project]
 name = "turtle_glide"
-version = "1.1.1"
+version = "2.0.0"
 description = "Librería para commandos para django"
 readme = "README.md"
 license = { text = "MPL-2.0" }
