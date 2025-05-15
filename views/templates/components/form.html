@@ -1,0 +1,36 @@
+<section class="content">
+    <h2>{{title}}</h2>
+    <div class="card">
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="form-control">
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field_name, field in contents.items %}
+                  <div class="form-group">
+                      <div class="form-label">{{ field.label_tag }}</div>
+                      <div class="form-input">{{ field }}</div>
+                      {% if field.errors %}
+                        <div class="field-error">{{ field.errors.0 }}</div>
+                      {% endif %}
+                  </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="sub-button">{{ content_button }}</button>
+                {% if href %}
+                    <a href="{% url href %}" class="sub-button">
+                        {{ href_text|default:"Volver" }}
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
