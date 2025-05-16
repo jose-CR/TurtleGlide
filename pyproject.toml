@@ -1,6 +1,6 @@
 [project]
 name = "turtle_glide"
-version = "2.1.0"
+version = "2.1.1"
 description = "Librería para commandos para django"
 readme = "README.md"
 license = { text = "MPL-2.0" }
@@ -22,9 +22,9 @@ dependencies = [
 
 [tool.setuptools.package-data]
 "*" = [
-    "turtle_glide/static/js/*.js",
-    "turtle_glide/static/css/*.css",
-    "turtle_glide/templates/*.html",
+    "TurtleGlide/views/static/js/*.js",
+    "TurtleGlide/views/static/css/*.css",
+    "TurtleGlide/views/templates/*.html",
 ]
 
 [build-system]
@@ -33,3 +33,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = { find = {} }
+include-package-data = true
