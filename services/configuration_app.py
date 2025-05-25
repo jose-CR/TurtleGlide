@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import utils.variable_globals as va
 import utils.helpers_command_global as helper
+import utils.styles_variables as st
 
 class DjangoFuncionApp:
     def __init__(self, project_root, project_name):
@@ -86,7 +87,78 @@ class DjangoFuncionApp:
 
         with open(settings_path, 'a') as f:
             f.write(va.config_variables.strip())
+        await self.add_locale_middleware()
+        await self.insert_i18n_settings()
         print("✅ Variables globales y de configuración de email agregadas a settings.py.")
+
+    async def add_locale_middleware(self):
+        settings_path = os.path.join(self.project_name, "settings.py")
+        if not os.path.exists(settings_path):
+            print(f"No se encontró el archivo settings.py en {settings_path}")
+            return
+
+        with open(settings_path, 'r') as f:
+            lines = f.readlines()
+
+        middleware_start = None
+        middleware_end = None
+
+        for i, line in enumerate(lines):
+            if 'MIDDLEWARE' in line and '=' in line:
+                middleware_start = i
+            if middleware_start is not None and line.strip() == ']':
+                middleware_end = i
+                break
+
+        if middleware_start is None or middleware_end is None:
+            print("No se encontró la definición de MIDDLEWARE.")
+            return
+
+        # Verificar si ya está presente
+        for line in lines[middleware_start:middleware_end]:
+            if 'django.middleware.locale.LocaleMiddleware' in line:
+                print("✅ LocaleMiddleware ya está presente en MIDDLEWARE.")
+                return
+
+        # Insertar justo después de CommonMiddleware si está
+        insert_index = middleware_end
+        for i in range(middleware_start, middleware_end):
+            if 'django.middleware.common.CommonMiddleware' in lines[i]:
+                insert_index = i + 1
+                break
+
+        lines.insert(insert_index, "    'django.middleware.locale.LocaleMiddleware',\n")
+
+        with open(settings_path, 'w') as f:
+            f.writelines(lines)
+
+        print("✅ LocaleMiddleware agregado correctamente a MIDDLEWARE.")
+
+    async def insert_i18n_settings(self):
+        settings_path = os.path.join(self.project_name, "settings.py")
+        if not os.path.exists(settings_path):
+            print(f"No se encontró el archivo settings.py en {settings_path}")
+            return
+
+        with open(settings_path, 'r') as f:
+            lines = f.readlines()
+
+        insert_index = None
+        for i, line in enumerate(lines):
+            if line.strip().startswith("TIME_ZONE"):
+                insert_index = i + 1
+                break
+
+        if insert_index is None:
+            print("No se encontró la configuración TIME_ZONE en settings.py.")
+            return
+
+        lines.insert(insert_index, va.i18n_settings)
+
+        with open(settings_path, 'w') as f:
+            f.writelines(lines)
+
+        print("✅ Configuración de internacionalización añadida después de TIME_ZONE.")
 
     async def installed_url_in_project(self):
         urls_path = os.path.join(self.project_name, "urls.py")
@@ -102,6 +174,7 @@ class DjangoFuncionApp:
         has_include_import = any("include" in line and "django.urls" in line for line in lines)
         has_home_url = any("include('perfil.urls')" in line for line in lines)
         has_accounts_url = any("include('django.contrib.auth.urls')" in line for line in lines)
+        has_i18n_url = any("include('django.conf.urls.i18n')" in line for line in lines)
 
         new_lines = []
         for line in lines:
@@ -134,6 +207,8 @@ class DjangoFuncionApp:
                     insert_index += 1
                 if not has_accounts_url:
                     new_lines.insert(insert_index, "    path('accounts/', include('django.contrib.auth.urls')),\n")
+                if not has_i18n_url:
+                    new_lines.insert(insert_index, "    path('i18n/', include('django.conf.urls.i18n')),\n")
                 break
 
         with open(urls_path, 'w') as f:
@@ -158,47 +233,83 @@ class DjangoFuncionApp:
         print(f"✅  configuracion de views y urls de {self.home}, terminada")
 
     async def install_templates_and_static_files(self):
-        # base_path = carpeta donde está este archivo (dentro de services)
-        base_path = os.path.abspath(os.path.dirname(__file__))
-
-        # Subir un nivel para salir de 'services'
-        project_root = os.path.dirname(base_path)
-
-        # Ahora apuntamos fuera de 'services'
-        views_path = os.path.join(project_root, 'views')
-        print(f"📁 Buscando en: {views_path}")
-
-        """if not os.path.exists(views_path):
-            os.makedirs(views_path, exist_ok=True)
-            print("Carpeta 'views' creada fue crada.'")
-
-            file_init_ = os.path.join(views_path, '__init__.py')
-            with open(file_init_, 'w') as f:
-                f.write('')
-            print("Archivo '__init__.py' creado dentro de 'views'.")
-        else:
-            print("La carpeta 'views' ya existe fuera de 'services'.") """
         
-        #rutas de origen
-        templates_path = os.path.join(views_path, 'templates')
-        static_path = os.path.join(views_path, 'static')
-
         #rutas de destino
         dest_templates = os.path.join(self.home, 'templates')
         dest_static = os.path.join(self.home, 'static')
 
+        #rutas de subcarpetas static
+        dest_css = os.path.join(dest_static, 'css')
+        dest_js = os.path.join(dest_static, 'js')
 
-        #creacion de las carpetas
-        os.makedirs(dest_templates, exist_ok=True)
-        os.makedirs(dest_static, exist_ok=True)
+        #rutas de subcarpetas templates
+        dest_components = os.path.join(dest_templates, 'components')
+        dest_email = os.path.join(dest_templates, 'emails')
+        dest_layout = os.path.join(dest_templates, 'layouts')
+        dest_profile = os.path.join(dest_templates, 'profile')
+        dest_profile_password = os.path.join(dest_profile, 'password')
+        dest_registration = os.path.join(dest_templates, 'registration')
 
-        # Copiar templates (.html)
-        helper.copy_recursive(templates_path, dest_templates, extension=['.html'])
+        if not os.path.exists(dest_static):
+            print("📁 creando la carpeta static y sub carpetas css y js")
+            os.makedirs(dest_static, exist_ok=True)
+            os.makedirs(dest_css, exist_ok=True)
+            os.makedirs(dest_js, exist_ok=True)
+        else:
+            print("⚠️ la carpeta ya existe")
 
-        # Copiar archivos estáticos (.css, .js, imágenes si quieres)
-        helper.copy_recursive(os.path.join(static_path, 'css'), os.path.join(dest_static, 'css'), extension=['.css'])
-        helper.copy_recursive(os.path.join(static_path, 'js'), os.path.join(dest_static, 'js'), extension=['.js'])
-        # Puedes agregar más extensiones si quieres: ['.css', '.js', '.png', '.jpg']
+        if not os.path.exists(dest_templates):
+            print("📁 creando la carpeta templates y sub carpetas components, emails, layouts, profile, password")  
+            os.makedirs(dest_templates, exist_ok=True)
+            os.makedirs(dest_components, exist_ok=True)
+            os.makedirs(dest_email, exist_ok=True)
+            os.makedirs(dest_layout, exist_ok=True)
+            os.makedirs(dest_profile, exist_ok=True)
+            os.makedirs(dest_profile_password, exist_ok=True)
+            os.makedirs(dest_registration, exist_ok=True)
+        
+        #static
+        file_css_base_app = os.path.join(dest_css, 'base_app.css')
+        file_css_basic_styles = os.path.join(dest_css, 'basic_styles.css')
+        file_js_message = os.path.join(dest_js, 'message.js')
+
+        #templates
+        templates_index = os.path.join(dest_templates, 'index.html')
+        templates_profile = os.path.join(dest_templates, 'profile.html')
+        components_button = os.path.join(dest_components, 'button.html')
+        components_card = os.path.join(dest_components, 'card.html')
+        components_form = os.path.join(dest_components, 'form.html')
+        email_password = os.path.join(dest_email, 'email_password.html')
+        layouts_app = os.path.join(dest_layout, 'app.html')
+        password_change_password = os.path.join(dest_profile_password, 'change_password.html')
+        password_reset_email = os.path.join(dest_profile_password, 'reset_email.html')
+        password_reset_confirm = os.path.join(dest_profile_password, 'reset_confirm.html')
+        password_reset_password_complete = os.path.join(dest_profile_password, 'reset_password_complete.html')
+        profile_edit = os.path.join(dest_profile, 'profile_edit.html')
+        profile_delete = os.path.join(dest_profile, 'profile_delete.html')
+        registration_login = os.path.join(dest_registration, 'login.html')
+        registration_register = os.path.join(dest_registration, 'register.html')
+        
+        helper.copy_content(file_css_base_app, st.css_base_app, 'base_app.css')
+        helper.copy_content(file_css_basic_styles, st.css_basic_styles, 'basic_styles.css')
+        helper.copy_content(file_js_message, st.js_message, 'message.js')
+        # -----------------------------------------------------------------
+        helper.copy_content(templates_index, st.templates_index, 'index.html')
+        helper.copy_content(templates_profile, st.templates_profile, 'profile.html')
+        helper.copy_content(components_button, st.components_button, 'button.html')
+        helper.copy_content(components_card, st.components_card, 'card.html')
+        helper.copy_content(components_form, st.components_form, 'form.html')
+        helper.copy_content(email_password, st.email_password, 'email_password.html')
+        helper.copy_content(layouts_app, st.layouts_app, 'app.html')
+        helper.copy_content(password_change_password, st.password_change_password, 'change_password.html')
+        helper.copy_content(password_reset_email, st.password_reset_email, 'reset_email.html')
+        helper.copy_content(password_reset_confirm, st.password_reset_confirm, 'reset_confirm.html')
+        helper.copy_content(password_reset_password_complete, st.password_reset_password_complete, 'reset_password_complete.html')
+        helper.copy_content(profile_edit, st.templates_profile_edit, 'profile_edit.html')
+        helper.copy_content(profile_delete, st.templates_profile_delete, 'profile_delete.html')
+        helper.copy_content(registration_login, st.templates_registration_login, 'login.html')
+        helper.copy_content(registration_register, st.templates_registration_register, 'register.html')
+
         print("✅ archivos de las carpetas static y templates hechos corectamente ")
 
     async def create_carpet_services_and_files(self):
@@ -273,3 +384,4 @@ class DjangoFuncionApp:
         helper.copy_content(file_templatetags, va.components, 'components.py')
 
         print("✅ creada la carpeta de los templatetags y sus archivos")
+

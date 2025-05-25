@@ -1,6 +1,6 @@
 [project]
 name = "turtle_glide"
-version = "2.1.2"
+version = "2.2.0"
 description = "Librería para commandos para django"
 readme = "README.md"
 license = { text = "MPL-2.0" }
@@ -18,13 +18,6 @@ classifiers = [
 dependencies = [
     "requests",
     "django>=3.2",
-]
-
-[tool.setuptools.package-data]
-"*" = [
-    "views/static/css/*.css",
-    "views/static/js/*.js",
-    "views/templates/*.html",
 ]
 
 [build-system]
