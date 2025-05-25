@@ -1,7 +1,6 @@
 # variables
 
-urls_home = """
-from django.urls import path
+urls_home = """from django.urls import path
 from .views import app
 from home.services.user_profile import ProfileCreateView, Profile, ProfileUpdateView, ProfileDeleteView
 from home.services.user_password import UserPasswordChange, UserPasswordReset, UserPasswordConfirm, UserPasswordComplete
@@ -22,12 +21,10 @@ urlpatterns = [
 ]
 """
 
-config_variables = """
-# Variables Globales
+config_variables = """\n# Variables Globales
 LOGIN_REDIRECT_URL = "app"
 LOGOUT_REDIRECT_URL = "app"
-
-# Envío de emails
+\n# Envío de emails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = ''
 EMAIL_HOST_USER = ''
@@ -37,16 +34,14 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'turtle@misitio.com'
 """
 
-views = """
-from django.shortcuts import render
+views = """from django.shortcuts import render
 
 # Create your views here.
 def app(request):
     return render(request, 'index.html')
 """
 
-forms_home = """
-from django import forms
+forms_home = """from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 
@@ -67,9 +62,9 @@ class CustomUserChangeForm(UserChangeForm):
         ]
 """
 
-user_password = """
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
+user_password = """from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth.forms import SetPasswordForm
+from django.utils.translation import gettext as _
 from django.urls import reverse_lazy
 from django.contrib import messages
 
@@ -77,29 +72,29 @@ template_general = "profile/password/"
 
 class UserPasswordChange(PasswordChangeView):
         form_class = SetPasswordForm
-        template_name = f"{template_general}change-password.html"
+        template_name = f"{template_general}change_password.html"
         success_url = reverse_lazy('profile')
 
         def form_valid(self, form):
-            messages.success(self.request, "La contraseña se ha cambiado exitosamente.")
+            messages.success(self.request, _("The password has been changed successfully."))
             return super().form_valid(form)
         
         def get_context_data(self, **kwargs):
                 context = super().get_context_data(**kwargs)
-                context['title'] = 'Change Password'
+                context['title'] = _('Change Password')
                 context['contents'] = ['new_password1', 'new_password2']
-                context['content_button'] = 'Change'
+                context['content_button'] = _('Change')
                 context['href'] = 'reset-password'
-                context['href_text'] = "quieres cambiar la contraseña"
+                context['href_text'] = _("quieres cambiar la contraseña")
                 return context
 
 class UserPasswordReset(PasswordResetView):
         template_name = "emails/email_password.html"
         success_url = reverse_lazy('profile')
-        email_template_name = f"{template_general}password_reset_email.html"
+        email_template_name = f"{template_general}reset_email.html"
 
         def form_valid(self, form):
-            messages.success(self.request, "Se ha enviado un correo electrónico a tu bandeja de entrada.")
+            messages.success(self.request, _("An email has been sent to your inbox."))
             return super().form_valid(form)
 
 class UserPasswordConfirm(PasswordResetConfirmView):
@@ -110,14 +105,14 @@ class UserPasswordComplete(PasswordResetCompleteView):
         template_name = f"{template_general}reset_password_complete.html"
 """
 
-user_profile = """
-from home.forms import CustomUserCreationForm, CustomUserChangeForm
+user_profile = """from home.forms import CustomUserCreationForm, CustomUserChangeForm
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import CreateView, UpdateView, DeleteView
+from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -141,9 +136,9 @@ class ProfileCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Register'
+        context['title'] = _('Register')
         context['contents'] = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
-        context['content_button'] = 'Sing Up'
+        context['content_button'] = _('Sing Up')
         return context
 
 # Read perfil
@@ -156,10 +151,10 @@ class Profile():
     def index(request):
 
         context = {
-            'label_username': 'Usuario',
-            'label_first_name': 'Primer Nombre',
-            'label_last_name': 'Último Apellido',
-            'label_email': 'Correo Electrónico',
+            'label_username': _('username'),
+            'label_first_name': _('First name'),
+            'label_last_name': _('Last name'),
+            'label_email': _('Email'),
         }
 
         return render(request, 'profile.html', context)
@@ -168,7 +163,7 @@ class Profile():
 class ProfileUpdateView(UpdateView):
     model = User
     form_class = CustomUserChangeForm
-    template_name = 'profile/profile-edit.html'
+    template_name = 'profile/profile_edit.html'
     success_url = reverse_lazy('profile')
 
     def get_object(self, queryset=None):
@@ -183,15 +178,15 @@ class ProfileUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edit User'
+        context['title'] = _('Edit User')
         context['contents'] = ['username', 'first_name', 'last_name', 'email']
-        context['content_button'] = 'Edit'
+        context['content_button'] = _('Edit')
         return context
     
 # Delete perfil 
 class ProfileDeleteView(DeleteView):
     model = User
-    template_name = 'profile/profile-delete.html'
+    template_name = 'profile/profile_delete.html'
     success_url = reverse_lazy('app')
 
     def get_queryset(self):
@@ -202,16 +197,9 @@ class ProfileDeleteView(DeleteView):
         logout(request)
 
         return response
-
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context['title'] = 'Delete User'
-        context['button'] = 'deleting'
-        return context
 """
 
-test_helpers = """
-from django.urls import reverse
+test_helpers = """from django.urls import reverse
 from django.contrib.messages import get_messages
 
 def template_use(name):
@@ -254,8 +242,7 @@ def call_status(response=None, *, client=None, url_name=None, expected_status=20
     return response
 """
 
-test_profile = """
-from django.test import TestCase, Client
+test_profile = """from django.test import TestCase, Client
 from django.urls import reverse
 from home.utils.test_helpers import template_use, call_status
 from django.contrib.messages import get_messages
@@ -517,8 +504,7 @@ class ProfileDeleteTest(TestCase):
 
 """
 
-test_password = """
-from django.test import TestCase, Client
+test_password = """from django.test import TestCase, Client
 from django.urls import reverse
 from django.core import mail
 from django.contrib.messages import get_messages
@@ -648,10 +634,10 @@ class TestPasswordUser(TestCase):
 
 """
 
-components = """
-from django import template
+components = """from django import template
 from django.template import loader, Node, Variable
 from django.utils.html import mark_safe
+from django.utils.translation import gettext as _
 
 register = template.Library()
 
@@ -681,16 +667,18 @@ class CardNode(Node):  # CORRECTO
         title = self.title.resolve(context)
         content = self.nodelist.render(context)
 
+        translated_title = _(title)
+
         tpl = loader.get_template('components/card.html')
         if hasattr(context, 'request'):
             return tpl.render({
-                'title': title,
+                'title': translated_title,
                 'content': mark_safe(content),
                 **context.flatten(),
             }, request=context['request'])
         else:
             return tpl.render({
-                'title': title,
+                'title': translated_title,
                 'content': mark_safe(content),
                 **context.flatten(),
             })
@@ -741,3 +729,15 @@ def button(title_button, href=None, parent_class=None, btn_class='', align='cent
         'text_color': text_color,
     }
 """
+
+i18n_settings = """\nUSE_L10N = True
+\nLANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Español'),
+]
+\nLOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+\nUSE_ACCEPT_LANGUAGE_HEADER = False
+"""
+
