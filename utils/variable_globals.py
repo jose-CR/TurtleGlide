@@ -35,10 +35,12 @@ DEFAULT_FROM_EMAIL = 'turtle@misitio.com'
 """
 
 views = """from django.shortcuts import render
+from django.utils.translation import gettext as _
 
 # Create your views here.
 def app(request):
-    return render(request, 'index.html')
+    button = _("Go")
+    return render(request, 'index.html', {'button': button})
 """
 
 forms_home = """from django import forms
@@ -85,7 +87,7 @@ class UserPasswordChange(PasswordChangeView):
                 context['contents'] = ['new_password1', 'new_password2']
                 context['content_button'] = _('Change')
                 context['href'] = 'reset-password'
-                context['href_text'] = _("quieres cambiar la contraseña")
+                context['href_text'] = _("Do you want to change your password?")
                 return context
 
 class UserPasswordReset(PasswordResetView):

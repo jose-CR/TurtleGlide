@@ -659,7 +659,7 @@ layouts_app = """{% load static %}
                     </option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Go">
+            <input type="submit" value="{{ button }}">
         </form>
     </nav>        
     <main>{% block content %}{% endblock %}</main>    
