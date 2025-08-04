@@ -1,94 +1,157 @@
-# turtle_glide
+# 🐢 Turtle Glide
 
-## Introducción
+## 🧭 Introducción
 
-turtle_glide es una herramienta diseñada para simplificar y mejorar algunas tareas tediosas para los desarrolladores de Django.
+**Turtle Glide** es una herramienta diseñada para **acelerar tareas comunes en proyectos Django**, como la creación de estructuras de autenticación y archivos base (`static`, `templates`). Ideal para desarrolladores que buscan ahorrar tiempo y seguir buenas prácticas.
 
-## Instalación del Paquete
+---
 
-### Instalación en tu Proyecto Django
+## 🚀 Instalación
 
-Para instalar turtle_glide en tu proyecto Django, sigue los siguientes pasos:
+### 1. Instalar el paquete
 
-1. Instala el paquete mediante pip:
+```bash
+pip install turtle_glide
+```
 
-   ```bash
-   pip install turtle_glide
-   ```
+### 2. Agregar a `INSTALLED_APPS`
 
-2. Agrega TurtleGlide como una app de Django en `INSTALLED_APPS`:
-   ```python
-   INSTALLED_APPS = [
-       'turtle_glide',
-   ]
-   ```
+En tu archivo `settings.py`, agrega:
 
-## Contenido
+```python
+INSTALLED_APPS = [
+    ...
+    'turtle_glide',
+]
+```
 
-1. [Comandos](#comandos)
-   1. [create_archive](#create_archive)
-   2. [create_app](#create_app)
-2. [Desarrolladores](#uso-para-desarrolladores)
-3. [Notas](#notas)
-4. [Cosas ha mejorar](#cosas-por-mejorar)
+---
 
-## Comandos Disponibles
+## 📦 Funcionalidades
 
-turtle_glide ofrece dos comandos principales:
+### ✅ Comandos disponibles
 
-### [create_archive](#create_archive)
+#### 1. `create_archive`
 
-Crea múltiples archivos en las carpetas `static` y `templates` de una app de Django.
+Crea archivos dentro de las carpetas `static/` y `templates/` de una app Django.
 
-#### Parámetros Obligatorios
+**Parámetros:**
 
-- `app_name`: Nombre de la app
-- `--template`: para archivos en la carpeta `templates`
-- `--static`: para archivos en la carpeta `static`
+* `app_name`: nombre de la app.
+* `--template`: lista de archivos que irán en `templates/`.
+* `--static`: lista de archivos que irán en `static/`.
 
-#### Ejemplo de Uso
+**Ejemplo de uso:**
+
 ```bash
 python manage.py create_archive home --static css/app.css js/app.js --template layouts/main.html
 ```
 
-### [create_app](#create_app)
+---
 
-Crea la carpeta home con todo lo necesario para la autenticación de usuarios, incluyendo el envío de correos electrónicos.
+#### 2. `create_app`
 
-#### Ejemplo de Uso
-```bash
-python3 manage.py create_app
-```
+Genera automáticamente una estructura de app llamada `home`, con todo lo necesario para:
 
-## [Uso para Desarrolladores](#uso-para-desarrolladores)
+* Autenticación de usuarios
+* Registro
+* Perfil
+* Cambio/restablecimiento de contraseña
+* Soporte multilenguaje
+* Plantillas modulares (cards, botones, formularios reutilizables)
+* Envío de correos
 
-Después de clonar el repositorio, debes ejecutar el script `setup.sh` para instalar todas las dependencias necesarias. Luego, activa el entorno virtual con el comando `source venv/bin/activate`.
-
-## [NOTAS](#notas)
-
-1. [se ha agregado la traducción para la carpeta `home` y agregado el selector para el idioma](#traduccion)
-
-## [Traducción](#traduccion)
-
-Ya que la carpeta `home` ya tiene todas las traducciones, debes hacer lo siguiente para recoger todas las traducciones :
-
-Primero, debes crear la carpeta `locale` dentro de la carpeta `home`.
-despues corre estos comandos
+**Uso:**
 
 ```bash
-    python manage.py makemessages -l es
+python manage.py create_app
 ```
+
+---
+
+## 🛠️ Uso para desarrolladores
+
+1. Clona el repositorio:
+
+   ```bash
+   git clone https://github.com/tuusuario/turtle_glide.git
+   cd turtle_glide
+   ```
+
+2. Ejecuta el script de instalación:
+
+   ```bash
+   bash setup.sh
+   ```
+
+3. Activa el entorno virtual:
+
+   ```bash
+   source venv/bin/activate
+   ```
+
+---
+
+## 🌍 Traducción
+
+La app `home` ya está preparada para múltiples idiomas usando `gettext`.
+Para habilitar traducciones:
+
+1. Crea la carpeta `locale/` dentro de `home/`.
+
+2. Ejecuta:
 
 ```bash
-    python manage.py compilemessages
+python manage.py makemessages -l es
+python manage.py compilemessages
 ```
 
-Luego, debes estar en la carpeta raíz de tu proyecto y ejecutar el siguiente comando para recoger las traducciones:
+3. Asegúrate de incluir en `settings.py`:
 
-## [Cosas por mejorar](#cosas-por-mejorar)
+```python
+LANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Español'),
+]
 
-1. intentar mejorar el codigo utilizando DRY y KISS 
-2. mejorar la UI
-3. añadir peticiones AJAX
-4. mejorar la UI para moviles
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
+USE_L10N = True
+USE_ACCEPT_LANGUAGE_HEADER = False
+```
+
+---
+
+## 🧪 Tests
+
+Turtle Glide incluye pruebas para:
+
+* Registro y login
+* Edición/eliminación de perfil
+* Cambio y recuperación de contraseña
+
+Para ejecutarlas:
+
+```bash
+python manage.py test home
+```
+
+---
+
+## 🔧 Cosas por mejorar
+
+1. Aplicar más principios **DRY** y **KISS**
+2. Mejorar la interfaz de usuario (UI)
+3. Incorporar peticiones **AJAX** para mejor UX
+4. Optimizar la interfaz para **dispositivos móviles**
+
+---
+
+## 🤝 Contribuciones
+
+¿Quieres contribuir o reportar un bug?
+Abre un [issue](https://github.com/tuusuario/turtle_glide/issues) o un pull request. ¡Toda ayuda es bienvenida!
+
+---
