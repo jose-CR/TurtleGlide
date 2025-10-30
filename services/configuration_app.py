@@ -4,6 +4,7 @@ import utils.variable_globals as va
 import utils.helpers_command_global as helper
 import utils.styles_variables as st
 from core.logger import Logger
+from .settings.settings_apps import ServiceSettingApp
 
 
 class DjangoFuncionApp:
@@ -22,7 +23,7 @@ class DjangoFuncionApp:
                 # ("Creando carpeta templatetags y archivos", self.create_templatetags),
                 # ("Configurando installed_apps", self.installed_apps),
                 # ("Configurando urls del proyecto", self.installed_url_in_project),
-            ]
+            ],
         }
 
     async def create_apps(self):
@@ -35,6 +36,7 @@ class DjangoFuncionApp:
 
             steps = self.app_steps.get(app_name, [])
             await self._execute_steps(steps, app_name)
+            await self.installed_apps(app_name)
             self.logger.ending(f"App '{app_name}' creada exitosamente en {app_path}")
 
     async def _create_django_app(self, app_name) -> bool:
@@ -56,35 +58,13 @@ class DjangoFuncionApp:
             except Exception as e:
                 self.logger.warning(f"[{app_name}] Error durante '{description}': {e}")
 
-    async def installed_apps(self):
-        settings_path = os.path.join(self.project_name, "settings.py")
-        if not os.path.exists(settings_path):
-            print(f"No se encontró el archivo settings.py en {settings_path}")
-            return
+    async def installed_apps(self, app_name):
+        self.logger.beginning("Agregando app a INSTALLED_APPS")
 
-        with open(settings_path, "r") as f:
-            lines = f.readlines()
-
-        app_already_installed = any(f"'{self.home}'" in line for line in lines)
-        if app_already_installed:
-            print(f"La app '{self.home}' ya está instalada en INSTALLED_APPS.")
-            return
-
-        new_lines = []
-        inside_installed_apps = False
-        for line in lines:
-            new_lines.append(line)
-            if "INSTALLED_APPS" in line and "=" in line:
-                inside_installed_apps = True
-            elif inside_installed_apps and line.strip().startswith("]"):
-                new_lines.insert(-1, f"    '{self.home}',\n")
-                inside_installed_apps = False
-
-        with open(settings_path, "w") as f:
-            f.writelines(new_lines)
-
-        print(f"✅ App '{self.home}' agregada a INSTALLED_APPS en settings.py.")
-        await self.write_variables()
+        service = ServiceSettingApp(self.project_name, app_name)
+        await service.add_app_to_installed_apps()
+        self.logger.ending("Apps agregada correctamente")
+        # await self.write_variables()
 
     async def write_variables(self):
         settings_path = os.path.join(self.project_name, "settings.py")
