@@ -5,6 +5,7 @@ import utils.helpers_command_global as helper
 import utils.styles_variables as st
 from core.logger import Logger
 from .settings.settings_apps import ServiceSettingApp
+from .settings.settings_variables import ServicesVaribles
 
 
 class DjangoFuncionApp:
@@ -64,90 +65,24 @@ class DjangoFuncionApp:
         service = ServiceSettingApp(self.project_name, app_name)
         await service.add_app_to_installed_apps()
         self.logger.ending("Apps agregada correctamente")
-        # await self.write_variables()
+        await self.write_variables()
 
     async def write_variables(self):
-        settings_path = os.path.join(self.project_name, "settings.py")
-        if not os.path.exists(settings_path):
-            print(f"No se encontró el archivo settings.py en {settings_path}")
-            return
+        self.logger.beginning("escribiendo varibles y todo el contenido necesario en settings.py")
+      
+        service = ServicesVaribles(self.project_name)
 
-        with open(settings_path, "a") as f:
-            f.write(va.config_variables.strip())
-        await self.add_locale_middleware()
-        await self.insert_i18n_settings()
-        print(
-            "✅ Variables globales y de configuración de email agregadas a settings.py."
-        )
-
-    async def add_locale_middleware(self):
-        settings_path = os.path.join(self.project_name, "settings.py")
-        if not os.path.exists(settings_path):
-            print(f"No se encontró el archivo settings.py en {settings_path}")
-            return
-
-        with open(settings_path, "r") as f:
-            lines = f.readlines()
-
-        middleware_start = None
-        middleware_end = None
-
-        for i, line in enumerate(lines):
-            if "MIDDLEWARE" in line and "=" in line:
-                middleware_start = i
-            if middleware_start is not None and line.strip() == "]":
-                middleware_end = i
-                break
-
-        if middleware_start is None or middleware_end is None:
-            print("No se encontró la definición de MIDDLEWARE.")
-            return
-
-        # Verificar si ya está presente
-        for line in lines[middleware_start:middleware_end]:
-            if "django.middleware.locale.LocaleMiddleware" in line:
-                print("✅ LocaleMiddleware ya está presente en MIDDLEWARE.")
-                return
-
-        # Insertar justo después de CommonMiddleware si está
-        insert_index = middleware_end
-        for i in range(middleware_start, middleware_end):
-            if "django.middleware.common.CommonMiddleware" in lines[i]:
-                insert_index = i + 1
-                break
-
-        lines.insert(insert_index, "    'django.middleware.locale.LocaleMiddleware',\n")
-
-        with open(settings_path, "w") as f:
-            f.writelines(lines)
-
-        print("✅ LocaleMiddleware agregado correctamente a MIDDLEWARE.")
-
-    async def insert_i18n_settings(self):
-        settings_path = os.path.join(self.project_name, "settings.py")
-        if not os.path.exists(settings_path):
-            print(f"No se encontró el archivo settings.py en {settings_path}")
-            return
-
-        with open(settings_path, "r") as f:
-            lines = f.readlines()
-
-        insert_index = None
-        for i, line in enumerate(lines):
-            if line.strip().startswith("TIME_ZONE"):
-                insert_index = i + 1
-                break
-
-        if insert_index is None:
-            print("No se encontró la configuración TIME_ZONE en settings.py.")
-            return
-
-        lines.insert(insert_index, va.i18n_settings)
-
-        with open(settings_path, "w") as f:
-            f.writelines(lines)
-
-        print("✅ Configuración de internacionalización añadida después de TIME_ZONE.")
+        try:
+            self.logger.info("Iniciando la instalacion de las Variables")
+            service.insert_variables()
+            self.logger.info("Iniciando la instalacion de los middleware")
+            service.insert_middleware()
+            self.logger.info("Iniciando la instalacion de i8n")
+            service.insert_i18n_settings()
+            self.logger.success("Se agregarn todas las configuraciones necesarias para las variables")
+        except Exception as e :
+            return self.logger.error(f"Error al escribir variables: {e}")
+        self.logger.ending("Terminando de escribir el archivo de configuración")
 
     async def installed_url_in_project(self):
         urls_path = os.path.join(self.project_name, "urls.py")

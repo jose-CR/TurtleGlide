@@ -7,7 +7,7 @@ class ServiceSettingsMain:
         self.project_name = project_name
         self.logger = Logger()
         self.settings_path = os.path.join(self.project_name, "settings.py")
-        self()
+        self.detected()
 
     def detected(self):
         """Verifica que settings.py exista y devuelve su ruta"""
@@ -31,9 +31,3 @@ class ServiceSettingsMain:
             f.writelines(lines)
         self.logger.info("sobre escribiendo las líneas en settings.py")
 
-    # funciones Call
-
-    def __call__(
-        self,
-    ):
-        return self.detected()
