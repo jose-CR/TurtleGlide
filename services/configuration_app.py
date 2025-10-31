@@ -6,6 +6,7 @@ import utils.styles_variables as st
 from core.logger import Logger
 from .settings.settings_apps import ServiceSettingApp
 from .settings.settings_variables import ServicesVaribles
+from .settings.settings_url import ServiceUrlGeneral
 
 
 class DjangoFuncionApp:
@@ -38,6 +39,7 @@ class DjangoFuncionApp:
             steps = self.app_steps.get(app_name, [])
             await self._execute_steps(steps, app_name)
             await self.installed_apps(app_name)
+            await self.installed_url_in_project()
             self.logger.ending(f"App '{app_name}' creada exitosamente en {app_path}")
 
     async def _create_django_app(self, app_name) -> bool:
@@ -85,72 +87,13 @@ class DjangoFuncionApp:
         self.logger.ending("Terminando de escribir el archivo de configuración")
 
     async def installed_url_in_project(self):
-        urls_path = os.path.join(self.project_name, "urls.py")
+        self.logger.beginning("Comenzando la integracion de las Urls")
 
-        if not os.path.exists(urls_path):
-            print(f"No se encontró el archivo urls.py en {urls_path}")
-            return
+        service = ServiceUrlGeneral(self.project_name, app="home")
 
-        with open(urls_path, "r") as f:
-            lines = f.readlines()
+        service.update_urls()
 
-        # Verificar si ya existen
-        has_include_import = any(
-            "include" in line and "django.urls" in line for line in lines
-        )
-        has_home_url = any("include('perfil.urls')" in line for line in lines)
-        has_accounts_url = any(
-            "include('django.contrib.auth.urls')" in line for line in lines
-        )
-        has_i18n_url = any("include('django.conf.urls.i18n')" in line for line in lines)
-
-        new_lines = []
-        for line in lines:
-            # Si encontramos el import sin include, lo corregimos
-            if "from django.urls import path" in line and "include" not in line:
-                line = line.strip().replace("path", "path, include") + "\n"
-            new_lines.append(line)
-
-        # Si falta el import, lo agregamos
-        if not has_include_import:
-            for i, line in enumerate(new_lines):
-                if "from django.urls" in line:
-                    new_lines.insert(i + 1, "from django.urls import include\n")
-                    break
-            else:
-                new_lines.insert(0, "from django.urls import path, include\n")
-
-        # Agregar las rutas dentro de urlpatterns
-        for i, line in enumerate(new_lines):
-            if "urlpatterns" in line and "=" in line:
-                # Buscamos donde empieza la lista [
-                for j in range(i, len(new_lines)):
-                    if "[" in new_lines[j]:
-                        insert_index = j + 1
-                        break
-                else:
-                    insert_index = i + 1  # Por si no encuentra
-                if not has_home_url:
-                    new_lines.insert(
-                        insert_index, f"    path('', include('{self.home}.urls')),\n"
-                    )
-                    insert_index += 1
-                if not has_accounts_url:
-                    new_lines.insert(
-                        insert_index,
-                        "    path('accounts/', include('django.contrib.auth.urls')),\n",
-                    )
-                if not has_i18n_url:
-                    new_lines.insert(
-                        insert_index,
-                        "    path('i18n/', include('django.conf.urls.i18n')),\n",
-                    )
-                break
-
-        with open(urls_path, "w") as f:
-            f.writelines(new_lines)
-
-        print("✅ URLs de 'perfil' y 'accounts' agregadas exitosamente a urls.py.")
+        self.logger.ending("URLs de 'home' y 'accounts' agregadas exitosamente a urls.py.")
 
     async def install_url_and_views_perfil(self):
         file_archive_urls = os.path.join(self.home, "urls.py")

@@ -31,3 +31,32 @@ class ServiceSettingsMain:
             f.writelines(lines)
         self.logger.info("sobre escribiendo las líneas en settings.py")
 
+class ServiceUrlMain:
+    def __init__(self, project_name):
+        self.project_name = project_name
+        self.logger = Logger()
+        self.url_path = os.path.join(self.project_name, 'urls.py')
+        self.detected()
+
+    def detected(self):
+        """Verifica que urls.py exista y devuelve su ruta"""
+        self.logger.info(f"Detectando urls.py en {self.project_name}...")
+        if not os.path.exists(self.url_path):
+            self.logger.error(f"No se encontró {self.url_path}")
+            raise FileNotFoundError(f"{self.url_path} no existe")
+        self.logger.info(f"Archivo urls.py detectado en: {self.url_path}")
+        return self.url_path
+
+    def readlines(self):
+        """Lee todas las líneas del archivo urls.py"""
+        with open(self.url_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        self.logger.info("leyendo el archivo urls.py")
+        return lines
+
+    def writelines(self, lines):
+        """Sobrescribe urls.py con las líneas nuevas"""
+        with open(self.url_path, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+        self.logger.info("sobre escribiendo las líneas en urls.py")
+
