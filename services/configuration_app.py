@@ -7,17 +7,28 @@ from core.logger import Logger
 from .settings.settings_apps import ServiceSettingApp
 from .settings.settings_variables import ServicesVaribles
 from .settings.settings_url import ServiceUrlGeneral
+from .settings.settings_main import ServiceSettingsSearchMain
+from pathlib import Path
 
 
 class DjangoFuncionApp:
     def __init__(self, project_root, project_name, apps=None):
-        self.project_root = project_root
+        project_root_path = Path(project_root)
+        cwd = Path.cwd()
+        if not project_root_path.is_absolute():
+            if cwd.name == project_root_path.name:
+                project_root_path = cwd
+            else:
+                project_root_path = cwd / project_root
+
+        self.project_root = project_root_path
         self.project_name = project_name
         self.apps = apps or ["home"]
         self.logger = Logger()
+        self.service_settings = ServiceSettingsSearchMain(self.project_root)
         self.app_steps = {
             "home": [
-                # ("Instalando URLs y vistas de perfil", self.install_url_and_views_perfil),
+                ("Instalando URLs y vistas de perfil", self.install_url_and_views_perfil),
                 # ("Instalando templates y archivos estáticos", self.install_templates_and_static_files),
                 # ("Creando carpeta services y archivos", self.create_carpet_services_and_files),
                 # ("Creando carpeta utils y archivos", self.carpet_utils_and_files),
@@ -29,7 +40,13 @@ class DjangoFuncionApp:
         }
 
     async def create_apps(self):
+        existing_apps = self.service_settings.detect_existing_apps()
+
         for app_name in self.apps:
+            if app_name in existing_apps:
+                self.logger.warning(f"La app '{app_name}' ya existe. Se omitirá su creación.")
+                continue
+
             app_path = os.path.join(self.project_root, app_name)
             self.logger.beginning(f"Creando app '{app_name}' en {app_path}")
 
@@ -37,9 +54,10 @@ class DjangoFuncionApp:
                 continue
 
             steps = self.app_steps.get(app_name, [])
-            await self._execute_steps(steps, app_name)
             await self.installed_apps(app_name)
+            await self._execute_steps(steps, app_name)
             await self.installed_url_in_project()
+
             self.logger.ending(f"App '{app_name}' creada exitosamente en {app_path}")
 
     async def _create_django_app(self, app_name) -> bool:
@@ -96,20 +114,27 @@ class DjangoFuncionApp:
         self.logger.ending("URLs de 'home' y 'accounts' agregadas exitosamente a urls.py.")
 
     async def install_url_and_views_perfil(self):
-        file_archive_urls = os.path.join(self.home, "urls.py")
-        file_archive_views = os.path.join(self.home, "views.py")
-        file_archive_forms = os.path.join(self.home, "forms.py")
+        self.logger.beginning("Comenzando la creacion de los archivos externos en las carpetas")
 
-        with open(file_archive_urls, "w") as f:
-            f.write(va.urls_home.strip())
+        files = {
+            "home": {
+                "urls.py": va.urls_home,
+                "views.py": va.views,
+                "forms.py": va.forms_home
+            }
+        }
 
-        with open(file_archive_views, "w") as f:
-            f.write(va.views.strip())
+        for app_name, app_files in files.items():
+            app_path = self.project_root / app_name
+            app_path.mkdir(parents=True, exist_ok=True)
 
-        with open(file_archive_forms, "w") as f:
-            f.write(va.forms_home.strip())
+            for file_name, content in app_files.items():
+                file_path = app_path / file_name
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(content.strip())
+                self.logger.success(f"Archivo creado: {file_path}")
 
-        print(f"✅  configuracion de views y urls de {self.home}, terminada")
+        self.logger.ending(f"configuracion de views y urls de {self.apps}, terminada")
 
     async def install_templates_and_static_files(self):
         # rutas de destino

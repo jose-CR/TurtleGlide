@@ -1,5 +1,6 @@
 import os
 from core.logger import Logger
+from pathlib import Path
 
 
 class ServiceSettingsMain:
@@ -59,4 +60,25 @@ class ServiceUrlMain:
         with open(self.url_path, "w", encoding="utf-8") as f:
             f.writelines(lines)
         self.logger.info("sobre escribiendo las líneas en urls.py")
+
+class ServiceSettingsSearchMain:
+    def __init__(self, project_root: Path):
+        self.project_root = project_root
+        self.logger = Logger()
+
+    def detect_existing_apps(self):
+        base_path = self.project_root
+
+        if not base_path.exists():
+            self.logger.error(f"No se encontró el proyecto: {base_path}")
+            return []
+
+        apps_found = []
+        for item in base_path.iterdir():
+            if item.is_dir() and not item.name.startswith("__"):
+                if (item / "apps.py").exists() or (item / "models.py").exists():
+                    apps_found.append(item.name)
+
+        self.logger.info(f"Apps detectadas en {base_path}: {apps_found}")
+        return apps_found
 
