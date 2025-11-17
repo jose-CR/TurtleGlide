@@ -10,6 +10,7 @@ class Logger:
     _YELLOW = "\033[93m"
     _RED = "\033[91m"
     _CYAN = "\033[96m"
+    _MAGENTA = "\033[95m"
     _RESET = "\033[0m"
     _BOLD = "\033[1m"
 
@@ -42,3 +43,21 @@ class Logger:
     @staticmethod
     def error(message: str) -> None:
        print(f"{Logger._RED}❌ {Logger._BOLD}{message}{Logger._RESET}")
+    
+    # 📁 Función original mejorada
+    @staticmethod
+    def folder(message: str, color: str = None) -> None:
+        chosen_color = color if color else Logger._MAGENTA
+        print(f"{chosen_color}📁📂 {Logger._BOLD}Creando directorio: {message}{Logger._RESET}")
+
+
+    # 📁➡️📂 Variante 3: Animación
+    @staticmethod
+    def carpet_anim(message: str, color: str = None) -> None:
+        import time
+        chosen_color = color if color else Logger._YELLOW
+        frames = ["📁", "📁➡️", "📁➡️📂", "📂"]
+        for frame in frames:
+            print(f"{chosen_color}{frame} {Logger._BOLD}{message}{Logger._RESET}", end="\r")
+            time.sleep(0.15)
+        print()
