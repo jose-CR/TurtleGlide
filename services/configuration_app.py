@@ -3,7 +3,7 @@ import subprocess
 import utils.variable_globals as va
 import utils.helpers_command_global as helper
 from core.logger import Logger
-from .settings.settings_apps import ServiceSettingApp
+from .settings.settings_apps import ServiceSettingApp, ServiceCreateStructure
 from .settings.settings_variables import ServicesVaribles
 from .settings.settings_url import ServiceUrlGeneral
 from .settings.settings_files import (
@@ -32,11 +32,8 @@ class DjangoFuncionApp:
         self.app_steps = {
             "home": [
                 # ("Instalando URLs y vistas de perfil", self.install_url_and_views_perfil),
-                (
-                    "Instalando templates y archivos estáticos",
-                    self.install_templates_and_static_files,
-                ),
-                # ("Creando carpeta services y archivos", self.create_carpet_services_and_files),
+                # ("Instalando templates y archivos estáticos", self.install_templates_and_static_files),
+                ("Creando carpeta services y archivos", self.create_carpet_services_and_files),
                 # ("Creando carpeta utils y archivos", self.carpet_utils_and_files),
                 # ("Creando carpeta test y archivos", self.create_carpet_test_and_files),
                 # ("Creando carpeta templatetags y archivos", self.create_templatetags),
@@ -177,20 +174,24 @@ class DjangoFuncionApp:
         self.logger.ending("Finalizada la creación de plantillas y estáticos.")
 
     async def create_carpet_services_and_files(self):
-        carpet_services = os.path.join(self.home, "services")
-        if not os.path.exists(carpet_services):
-            print("📁 creando la carpeta services")
-            os.makedirs(carpet_services, exist_ok=True)
-        else:
-            print("⚠️ la carpeta ya existe")
+        self.logger.beginning("comenzando la estructura de la app")
 
-        file_user_password = os.path.join(carpet_services, "user_password.py")
-        file_user_profile = os.path.join(carpet_services, "user_profile.py")
+        search = ServiceSettingsSearchMain(self.project_root)
+        apps = search.detect_existing_apps()
 
-        helper.copy_content(file_user_profile, va.user_profile, "user_profile.py")
-        helper.copy_content(file_user_password, va.user_password, "user_password.py")
+        if not apps:
+            self.logger.error("No se encontraron apps.")
+            return
 
-        print("✅ terminado los archivos de la carpeta services")
+        service = ServiceCreateStructure(self.project_root)
+
+        for app in apps:
+            services_path = service.ensure_folder(app, "services")
+            structure = service.hierarchy()
+
+            service.creation_of_files(services_path, structure)
+
+        self.logger.ending("Terminado la estructura de la app")
 
     async def carpet_utils_and_files(self):
         carpet_utils = os.path.join(self.home, "utils")

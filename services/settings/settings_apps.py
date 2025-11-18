@@ -1,3 +1,6 @@
+import utils.variable_globals as vo
+import utils.helpers_command_global as reco
+from pathlib import Path
 from core.logger import Logger
 from .settings_main import ServiceSettingsMain
 
@@ -38,3 +41,50 @@ class ServiceSettingApp:
                 inside_block = False
 
         self.settings_service.writelines(new_lines)
+
+class ServiceCreateStructure:
+    def __init__(self, project_root: Path):
+        self.project_root = Path(project_root)
+        self.logger = Logger()
+
+    def ensure_folder(self, app_name: str, folder_name: str) -> Path:
+        app_path = self.project_root / app_name
+        folder_path = app_path / folder_name
+
+        if not folder_path.exists():
+            self.logger.carpet_anim(
+                f"creando carpeta '{folder_name}' en la app '{app_name}'"
+            )
+            folder_path.mkdir(parents=True, exist_ok=True)
+        else:
+            self.logger.warning(
+                f"⚠️ La carpeta '{folder_name}' ya existe en la app '{app_name}'"
+            )
+
+        return folder_path
+
+    def creation_of_files(self, base: Path, structure: dict):
+        for name, content in structure.items():
+            new_path = base / name
+
+            # Si el contenido es un string → es archivo
+            if isinstance(content, str):
+                reco.copy_content(new_path, content, filename=name)
+                self.logger.info(f"Archivo creado: {new_path}")
+                continue
+
+            # Si el contenido es un dict → es carpeta (recursión)
+            if isinstance(content, dict):
+                if not new_path.exists():
+                    new_path.mkdir(exist_ok=True)
+                    self.logger.info(f"Carpeta creada: {new_path}")
+
+                self.creation_of_files(new_path, content)
+
+    def hierarchy(self):
+        return {
+                "user_password.py": vo.user_password,
+                "user_profile.py": vo.user_profile,
+                "__init__.py": ""
+            }
+
