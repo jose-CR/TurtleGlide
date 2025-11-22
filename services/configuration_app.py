@@ -1,7 +1,6 @@
 import os
 import subprocess
 import utils.variable_globals as va
-import utils.helpers_command_global as helper
 from core.logger import Logger
 from .settings.settings_apps import ServiceSettingApp, ServiceCreateStructure
 from .settings.settings_variables import ServicesVaribles
@@ -33,10 +32,7 @@ class DjangoFuncionApp:
             "home": [
                 # ("Instalando URLs y vistas de perfil", self.install_url_and_views_perfil),
                 # ("Instalando templates y archivos estáticos", self.install_templates_and_static_files),
-                ("Creando carpeta services y archivos", self.create_carpet_services_and_files),
-                # ("Creando carpeta utils y archivos", self.carpet_utils_and_files),
-                # ("Creando carpeta test y archivos", self.create_carpet_test_and_files),
-                # ("Creando carpeta templatetags y archivos", self.create_templatetags),
+                ("Creando carpetas y archivos", self.create_folders_and_files),
                 # ("Configurando installed_apps", self.installed_apps),
                 # ("Configurando urls del proyecto", self.installed_url_in_project),
             ],
@@ -173,7 +169,7 @@ class DjangoFuncionApp:
 
         self.logger.ending("Finalizada la creación de plantillas y estáticos.")
 
-    async def create_carpet_services_and_files(self):
+    async def create_folders_and_files(self):
         self.logger.beginning("comenzando la estructura de la app")
 
         search = ServiceSettingsSearchMain(self.project_root)
@@ -186,66 +182,10 @@ class DjangoFuncionApp:
         service = ServiceCreateStructure(self.project_root)
 
         for app in apps:
-            services_path = service.ensure_folder(app, "services")
-            structure = service.hierarchy()
+            app_path = self.project_root / app
 
-            service.creation_of_files(services_path, structure)
+            structure = service.hierarchy()  
+            service.creation_of_files(app_path, structure)
 
         self.logger.ending("Terminado la estructura de la app")
 
-    async def carpet_utils_and_files(self):
-        carpet_utils = os.path.join(self.home, "utils")
-        if not os.path.exists(carpet_utils):
-            print("📁 creando la carpeta utils")
-            os.makedirs(carpet_utils, exist_ok=True)
-            file_init_ = os.path.join(carpet_utils, "__init__.py")
-            with open(file_init_, "w") as f:
-                f.write("")
-            print("✅ Archivo '__init__.py' creado dentro de 'utils'.")
-        else:
-            print("⚠️ la carpeta ya existe")
-
-        file_test_helpers = os.path.join(carpet_utils, "test_helpers.py")
-
-        helper.copy_content(file_test_helpers, va.test_helpers, "test_helpers.py")
-
-        print(f"✅ creada la carpeta {carpet_utils}, y sus archivos")
-
-    async def create_carpet_test_and_files(self):
-        carpet_test = os.path.join(self.home, "test")
-
-        if not os.path.exists(carpet_test):
-            print("📁 creando la carpeta test")
-            os.makedirs(carpet_test, exist_ok=True)
-            file_init_ = os.path.join(carpet_test, "__init__.py")
-            with open(file_init_, "w") as f:
-                f.write("")
-            print("✅ Archivo '__init__.py' creado dentro de 'test'.")
-        else:
-            print("⚠️ la carpeta ya existe")
-
-        file_test_profile = os.path.join(carpet_test, "test_profile.py")
-        file_test_password = os.path.join(carpet_test, "test_password.py")
-
-        helper.copy_content(file_test_profile, va.test_profile, "test_profile.py")
-        helper.copy_content(file_test_password, va.test_password, "test_password.py")
-
-        print("✅ creada la carpeta de test y sus archivos")
-
-    async def create_templatetags(self):
-        carpet_templatetags = os.path.join(self.home, "templatetags")
-        if not os.path.exists(carpet_templatetags):
-            print("📁 creando la carpeta templatetags")
-            os.makedirs(carpet_templatetags, exist_ok=True)
-            file_init_ = os.path.join(carpet_templatetags, "__init__.py")
-            with open(file_init_, "w") as f:
-                f.write("")
-            print("✅ Archivo '__init__.py' creado dentro de 'templatetags'.")
-        else:
-            print("⚠️ la carpeta ya existe")
-
-        file_templatetags = os.path.join(carpet_templatetags, "components.py")
-
-        helper.copy_content(file_templatetags, va.components, "components.py")
-
-        print("✅ creada la carpeta de los templatetags y sus archivos")

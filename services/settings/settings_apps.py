@@ -65,26 +65,49 @@ class ServiceCreateStructure:
 
     def creation_of_files(self, base: Path, structure: dict):
         for name, content in structure.items():
-            new_path = base / name
+            if name == base.name:
+                new_path = base
+            else:
+                new_path = base / name
 
-            # Si el contenido es un string → es archivo
+                # Si el contenido es un archivo
             if isinstance(content, str):
                 reco.copy_content(new_path, content, filename=name)
                 self.logger.info(f"Archivo creado: {new_path}")
                 continue
 
-            # Si el contenido es un dict → es carpeta (recursión)
+                # Si el contenido es una carpeta
             if isinstance(content, dict):
                 if not new_path.exists():
                     new_path.mkdir(exist_ok=True)
                     self.logger.info(f"Carpeta creada: {new_path}")
 
-                self.creation_of_files(new_path, content)
+            self.creation_of_files(new_path, content)
 
     def hierarchy(self):
         return {
-                "user_password.py": vo.user_password,
-                "user_profile.py": vo.user_profile,
-                "__init__.py": ""
+                "home": {
+                    "services": {
+                        "user_password.py": vo.user_password,
+                        "user_profile.py": vo.user_profile,
+                        "__init__.py": "",
+                    },
+
+                    "utils": {
+                        "test_helpers.py": vo.test_helpers,
+                        "__init__.py": "",
+                    },
+
+                    "test": {
+                        "test_profile.py": vo.test_profile,
+                        "test_password.py": vo.test_password,
+                        "__init__.py": "",
+                    },
+
+                    "templatetags": {
+                        "components.py": vo.components,
+                        "__init__.py": "",
+                    }
+                }
             }
 
